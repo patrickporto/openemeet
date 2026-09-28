@@ -5,7 +5,7 @@ import type { Camera } from '../../shared/types.js'
 import { CameraController } from './controller.js'
 import { MockCameraController, createMockCamera } from './mock.js'
 import { scanCameras } from './scanner.js'
-import { cacheState, getCachedState } from '../store/presets.js'
+import { cacheState, getCachedState, listPresets } from '../store/presets.js'
 import { settings } from '../store/settings.js'
 import { log } from '../logger.js'
 
@@ -91,6 +91,7 @@ export class CameraManager extends EventEmitter {
         // Pull whatever the camera can report, then publish the corrected state.
         void controller
           .sync()
+          .then(() => this.reconcileActivePreset(controller))
           .then(() => this.emit('changed', this.list()))
           .catch(() => undefined)
       }
@@ -100,6 +101,30 @@ export class CameraManager extends EventEmitter {
       return cameras
     } finally {
       this.scanning = false
+    }
+  }
+
+  /**
+   * The active preset is in-memory state, so a restart loses it. Comparing the
+   * live PTZ position against saved presets recovers it, which keeps the tray's
+   * preset selection honest from the first menu open.
+   */
+  private async reconcileActivePreset(controller: CameraController): Promise<void> {
+    if (!controller.camera.capabilities.ptz) return
+
+    try {
+      const position = await controller.getPtz()
+      // Pan/tilt are stored in degrees but held in arc-seconds, so a round-trip
+      // can land a degree off. Zoom is discrete and must match exactly.
+      const match = listPresets(controller.camera.id).find(
+        (preset) =>
+          Math.abs(preset.pan - position.pan) <= 1 &&
+          Math.abs(preset.tilt - position.tilt) <= 1 &&
+          preset.zoom === position.zoom,
+      )
+      controller.setActivePreset(match?.id ?? null)
+    } catch {
+      // Device busy or unreadable: leave the association unknown.
     }
   }
 

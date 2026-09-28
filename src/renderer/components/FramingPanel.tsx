@@ -3,7 +3,7 @@ import type { Camera } from '@shared/types'
 import { useI18n } from '../i18n/I18nProvider'
 import { useToast } from '../hooks/useToast'
 import { usePtz } from '../hooks/usePtz'
-import { PtzPad } from './PtzPad'
+import { PtzRemote } from './PtzRemote'
 import { CameraPreview } from './CameraPreview'
 import { Button, Card, Panel } from './ui'
 import './FramingPanel.css'
@@ -61,14 +61,27 @@ export function FramingPanel({
     >
       <div className="framing">
         <Card className="framing__pad">
-          <PtzPad
+          <PtzRemote
             pan={position.pan}
             tilt={position.tilt}
             zoom={position.zoom}
+            step={jogStep}
             disabled={disabled}
             onChange={move}
             onCommit={reload}
-            labels={{ pan: t('framing.pan'), tilt: t('framing.tilt'), zoom: t('framing.zoom') }}
+            onHome={() => void center()}
+            labels={{
+              pan: t('framing.pan'),
+              tilt: t('framing.tilt'),
+              zoom: t('framing.zoom'),
+              up: t('framing.up'),
+              down: t('framing.down'),
+              left: t('framing.left'),
+              right: t('framing.right'),
+              zoomIn: t('framing.zoomIn'),
+              zoomOut: t('framing.zoomOut'),
+              home: t('framing.home'),
+            }}
           />
 
           <div className="framing__jog">
@@ -88,45 +101,7 @@ export function FramingPanel({
             </div>
           </div>
 
-          <div className="framing__dpad">
-            <JogButton
-              className="framing__dpad--up"
-              label="▲"
-              disabled={disabled}
-              onClick={() => move({ tilt: position.tilt + jogStep })}
-              onRelease={reload}
-            />
-            <JogButton
-              className="framing__dpad--left"
-              label="◀"
-              disabled={disabled}
-              onClick={() => move({ pan: position.pan - jogStep })}
-              onRelease={reload}
-            />
-            <Button
-              variant="solid"
-              className="framing__dpad--center"
-              disabled={disabled}
-              onClick={() => void center()}
-            >
-              {t('framing.center')}
-            </Button>
-            <JogButton
-              className="framing__dpad--right"
-              label="▶"
-              disabled={disabled}
-              onClick={() => move({ pan: position.pan + jogStep })}
-              onRelease={reload}
-            />
-            <JogButton
-              className="framing__dpad--down"
-              label="▼"
-              disabled={disabled}
-              onClick={() => move({ tilt: position.tilt - jogStep })}
-              onRelease={reload}
-            />
-          </div>
-
+          <p className="framing__hint">{t('framing.holdHint')}</p>
           <p className="framing__hint">{t('framing.keyboardHint')}</p>
         </Card>
 
@@ -135,8 +110,10 @@ export function FramingPanel({
             <CameraPreview
               camera={camera}
               active={previewOn}
+              blocked={camera.state.tracking === 'privacy'}
               errorLabel={t('framing.previewError')}
               offLabel={t('framing.previewOff')}
+              blockedLabel={t('framing.previewBlocked')}
             />
             <p className="framing__previewHint">{t('framing.previewHint')}</p>
           </Card>
@@ -163,66 +140,5 @@ export function FramingPanel({
         </div>
       </div>
     </Panel>
-  )
-}
-
-/**
- * A jog control that repeats while held, like a real PTZ joystick.
- */
-function JogButton({
-  label,
-  className,
-  disabled,
-  onClick,
-  onRelease,
-}: {
-  label: string
-  className: string
-  disabled?: boolean
-  onClick: () => void
-  onRelease: () => void
-}) {
-  const [timers, setTimers] = useState<{ delay?: number; repeat?: number }>({})
-
-  const stop = useCallback(() => {
-    setTimers((current) => {
-      if (current.delay) window.clearTimeout(current.delay)
-      if (current.repeat) window.clearInterval(current.repeat)
-      return {}
-    })
-    onRelease()
-  }, [onRelease])
-
-  const start = useCallback(() => {
-    if (disabled) return
-    onClick()
-    const delay = window.setTimeout(() => {
-      const repeat = window.setInterval(onClick, 110)
-      setTimers((current) => ({ ...current, repeat }))
-    }, 380)
-    setTimers({ delay })
-  }, [disabled, onClick])
-
-  useEffect(
-    () => () => {
-      if (timers.delay) window.clearTimeout(timers.delay)
-      if (timers.repeat) window.clearInterval(timers.repeat)
-    },
-    [timers],
-  )
-
-  return (
-    <button
-      type="button"
-      className={`framing__jogBtn ${className}`}
-      disabled={disabled}
-      aria-label={label}
-      onPointerDown={start}
-      onPointerUp={stop}
-      onPointerLeave={stop}
-      onPointerCancel={stop}
-    >
-      {label}
-    </button>
   )
 }

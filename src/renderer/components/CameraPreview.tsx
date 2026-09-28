@@ -8,11 +8,14 @@ import './CameraPreview.css'
  * Chromium labels video inputs with the UVC product name, so we match on that
  * rather than on the /dev/videoN path, which the web layer never sees.
  */
-function pickDeviceId(devices: MediaDeviceInfo[], camera: Camera): string | undefined {
+function pickDeviceId(
+  devices: MediaDeviceInfo[],
+  names: { v4l2Name: string; label: string },
+): string | undefined {
   const inputs = devices.filter((d) => d.kind === 'videoinput')
   const normalise = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
 
-  const candidates = [camera.v4l2Name, camera.label].map(normalise).filter(Boolean)
+  const candidates = [names.v4l2Name, names.label].map(normalise).filter(Boolean)
   for (const candidate of candidates) {
     const hit = inputs.find((d) => {
       const label = normalise(d.label)
@@ -28,14 +31,23 @@ function pickDeviceId(devices: MediaDeviceInfo[], camera: Camera): string | unde
 export function CameraPreview({
   camera,
   active,
+  blocked,
   errorLabel,
   offLabel,
+  blockedLabel,
 }: {
   camera: Camera
   active: boolean
+  /** Privacy mode is on: the camera must not be captured at all. */
+  blocked: boolean
   errorLabel: string
   offLabel: string
+  blockedLabel: string
 }) {
+  // Only these fields decide which device to open. Depending on the whole
+  // camera object would restart the stream on every state broadcast, and
+  // re-acquiring the capture makes the firmware leave privacy mode.
+  const { id: cameraId, v4l2Name, label, mock } = camera
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -51,9 +63,9 @@ export function CameraPreview({
 
     async function start() {
       setError(null)
-      if (!active) return stop()
+      if (!active || blocked) return stop()
 
-      if (camera.mock) {
+      if (mock) {
         setError(null)
         return
       }
@@ -69,7 +81,7 @@ export function CameraPreview({
         }
         if (cancelled) return
 
-        const deviceId = pickDeviceId(devices, camera)
+        const deviceId = pickDeviceId(devices, { v4l2Name, label })
         const stream = await navigator.mediaDevices.getUserMedia({
           video: deviceId ? { deviceId: { exact: deviceId } } : true,
         })
@@ -94,7 +106,16 @@ export function CameraPreview({
       cancelled = true
       stop()
     }
-  }, [active, camera, stop])
+  }, [active, blocked, cameraId, v4l2Name, label, mock, stop])
+
+  if (blocked) {
+    return (
+      <div className="preview preview--blocked">
+        <ShutterGlyph />
+        <span>{blockedLabel}</span>
+      </div>
+    )
+  }
 
   if (!active) {
     return (
@@ -105,7 +126,7 @@ export function CameraPreview({
     )
   }
 
-  if (camera.mock) {
+  if (mock) {
     return (
       <div className="preview preview--mock">
         <div className="preview__mockGrid" aria-hidden="true" />
@@ -136,6 +157,15 @@ export function CameraPreview({
       <video ref={videoRef} className="preview__video" muted playsInline />
       <span className="preview__tally" aria-hidden="true" />
     </div>
+  )
+}
+
+function ShutterGlyph() {
+  return (
+    <svg width="34" height="34" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="11" stroke="currentColor" strokeWidth="1.5" opacity="0.8" />
+      <path d="M8.2 8.2 23.8 23.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
   )
 }
 

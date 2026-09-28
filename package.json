@@ -1,6 +1,6 @@
 {
   "name": "openemeet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Premium Linux control center for EMEET PIXY cameras",
   "main": "./out/main/index.js",
   "author": "openemeet",

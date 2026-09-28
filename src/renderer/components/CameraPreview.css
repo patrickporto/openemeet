@@ -20,6 +20,7 @@
 
 .preview--idle,
 .preview--error,
+.preview--blocked,
 .preview--mock {
   flex-direction: column;
   gap: var(--sp-2);
@@ -32,6 +33,19 @@
 
 .preview--error {
   color: var(--signal-alert);
+}
+
+/* Privacy: the capture is released, not merely hidden. */
+.preview--blocked {
+  color: var(--signal-alert);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0 9px,
+      color-mix(in srgb, var(--signal-alert) 7%, transparent) 9px 18px
+    ),
+    var(--bg-sunken);
+  font-weight: 550;
 }
 
 .preview--error small {

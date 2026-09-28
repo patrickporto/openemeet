@@ -31,7 +31,7 @@ export const en = {
 
   // Framing
   'framing.title': 'Framing',
-  'framing.subtitle': 'Drag the pad to pan and tilt. Scroll or use the ring to zoom.',
+  'framing.subtitle': 'Steer the camera with the remote. The centre key recentres it.',
   'framing.pan': 'Pan',
   'framing.tilt': 'Tilt',
   'framing.zoom': 'Zoom',
@@ -43,6 +43,15 @@ export const en = {
   'framing.previewStop': 'Stop preview',
   'framing.previewError': 'Could not open the video stream',
   'framing.previewHint': 'The preview uses your browser camera permission and does not block other apps on most setups.',
+  'framing.previewBlocked': 'Privacy mode is on',
+  'framing.up': 'Tilt up',
+  'framing.down': 'Tilt down',
+  'framing.left': 'Pan left',
+  'framing.right': 'Pan right',
+  'framing.zoomIn': 'Zoom in',
+  'framing.zoomOut': 'Zoom out',
+  'framing.home': 'Recenter',
+  'framing.holdHint': 'Hold a direction to keep moving',
   'framing.savePreset': 'Save current framing',
   'framing.keyboardHint': 'Arrow keys pan and tilt · + and − zoom · 0 centers',
 
@@ -104,6 +113,7 @@ export const en = {
   'presets.saved': 'Preset saved',
   'presets.applied': 'Preset applied',
   'presets.deleted': 'Preset deleted',
+  'presets.active': 'Active',
 
   // Settings
   'settings.title': 'Settings',
@@ -151,6 +161,9 @@ export const en = {
   'tray.presets': 'Presets',
   'tray.center': 'Center framing',
   'tray.noCameras': 'No camera detected',
+  'tray.noPresets': 'No presets saved',
+  'tray.presetActive': 'Active preset',
+  'tray.custom': 'Custom framing',
   'tray.quit': 'Quit',
   'tray.refresh': 'Rescan devices',
 
@@ -196,7 +209,7 @@ export const ptBR: Record<TranslationKey, string> = {
   'status.noHid': 'Sem acesso HID',
 
   'framing.title': 'Enquadramento',
-  'framing.subtitle': 'Arraste o pad para mover. Role ou use o anel para dar zoom.',
+  'framing.subtitle': 'Comande a c\u00e2mera pelo controle. A tecla central recentraliza.',
   'framing.pan': 'Pan',
   'framing.tilt': 'Tilt',
   'framing.zoom': 'Zoom',
@@ -208,6 +221,15 @@ export const ptBR: Record<TranslationKey, string> = {
   'framing.previewStop': 'Fechar prévia',
   'framing.previewError': 'Não foi possível abrir o vídeo',
   'framing.previewHint': 'A prévia usa a permissão de câmera do app e, na maioria dos casos, não bloqueia outros programas.',
+  'framing.previewBlocked': 'Modo privacidade ativo',
+  'framing.up': 'Inclinar para cima',
+  'framing.down': 'Inclinar para baixo',
+  'framing.left': 'Girar para a esquerda',
+  'framing.right': 'Girar para a direita',
+  'framing.zoomIn': 'Aproximar',
+  'framing.zoomOut': 'Afastar',
+  'framing.home': 'Recentralizar',
+  'framing.holdHint': 'Segure uma dire\u00e7\u00e3o para mover continuamente',
   'framing.savePreset': 'Salvar enquadramento atual',
   'framing.keyboardHint': 'Setas movem · + e − dão zoom · 0 centraliza',
 
@@ -266,6 +288,7 @@ export const ptBR: Record<TranslationKey, string> = {
   'presets.saved': 'Preset salvo',
   'presets.applied': 'Preset aplicado',
   'presets.deleted': 'Preset apagado',
+  'presets.active': 'Ativo',
 
   'settings.title': 'Ajustes',
   'settings.subtitle': 'Preferências e integração com o sistema.',
@@ -310,6 +333,9 @@ export const ptBR: Record<TranslationKey, string> = {
   'tray.presets': 'Presets',
   'tray.center': 'Centralizar enquadramento',
   'tray.noCameras': 'Nenhuma câmera detectada',
+  'tray.noPresets': 'Nenhum preset salvo',
+  'tray.presetActive': 'Preset ativo',
+  'tray.custom': 'Enquadramento manual',
   'tray.quit': 'Sair',
   'tray.refresh': 'Procurar dispositivos',
 

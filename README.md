@@ -24,12 +24,12 @@ Multiple PIXY cameras are supported at once, each with its own presets.
 
 | Area | What you get |
 |---|---|
-| **Framing** | Optical PTZ pad with a zoom ring, hold-to-repeat jog buttons, keyboard framing, live preview |
+| **Framing** | Remote-style PTZ dial with hold-to-repeat keys, a centre key that doubles as a position display, zoom rocker, keyboard framing and live preview |
 | **Image** | Every control the camera actually exposes, discovered at runtime — never a hardcoded list |
 | **Smart** | AI tracking · privacy mode · gesture control · audio profile (NC / Live / Original) · auto-privacy timeout · anti-flicker |
-| **Presets** | Saved framings, scoped per camera by serial number |
+| **Presets** | Saved framings scoped per camera by serial, applied from the window or the tray, with the live one marked |
 | **Multi-camera** | Cameras paired to their HID node via USB topology, so two PIXYs never cross wires |
-| **Tray** | GNOME AppIndicator menu: privacy, tracking, gestures, audio and presets without opening the window |
+| **Tray** | GNOME AppIndicator menu: camera mode, presets (showing which is live), audio, gestures and recentre without opening the window |
 | **Bilingual** | Português (pt-BR) and English, following your system locale on first run |
 | **Themes** | Dark, light, or follow the system |
 

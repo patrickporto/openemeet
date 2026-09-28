@@ -1,6 +1,9 @@
 /*
- * openemeet design tokens — "optical instrument".
- * Graphite glass, tungsten-amber accent, hairline structure.
+ * openemeet design tokens.
+ *
+ * Palette follows EMEET Studio: azure accent on clean, light surfaces, with a
+ * graphite dark theme carrying the same blue. Signals stay constant across
+ * themes so a status colour never means two different things.
  */
 
 :root {
@@ -44,9 +47,9 @@
   --dur-slow: 340ms;
 
   /* Signals — identical in both themes so status never lies */
-  --signal-live: #2fbf7f;
-  --signal-alert: #f0564a;
-  --signal-info: #3aa0e8;
+  --signal-live: #22c55e;
+  --signal-alert: #ff4d4f;
+  --signal-info: #1890ff;
 }
 
 /* ---------- Dark (default) ---------- */
@@ -72,11 +75,12 @@
   --text-tertiary: rgba(242, 243, 246, 0.4);
   --text-inverse: #0b0c0f;
 
-  --accent: #f0a03f;
-  --accent-bright: #ffc074;
-  --accent-dim: rgba(240, 160, 63, 0.16);
-  --accent-glow: rgba(240, 160, 63, 0.32);
-  --accent-text: #0e1014;
+  --accent: #3d9bff;
+  --accent-bright: #7ab9ff;
+  --accent-strong: #1f86f0;
+  --accent-dim: rgba(61, 155, 255, 0.16);
+  --accent-glow: rgba(61, 155, 255, 0.34);
+  --accent-text: #ffffff;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.7);
@@ -84,43 +88,61 @@
   --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
   /* Atmosphere behind the app shell */
-  --halo-a: rgba(240, 160, 63, 0.11);
-  --halo-b: rgba(58, 160, 232, 0.07);
+  --halo-a: rgba(61, 155, 255, 0.13);
+  --halo-b: rgba(120, 90, 255, 0.07);
+
+  /* Physical-control surfaces (the PTZ remote) */
+  --dial-face: linear-gradient(160deg, #23262d 0%, #15171c 58%, #101216 100%);
+  --dial-rim: rgba(255, 255, 255, 0.13);
+  --dial-well: #0b0d11;
+  --dial-key: rgba(255, 255, 255, 0.045);
+  --dial-key-hover: rgba(255, 255, 255, 0.085);
+  --dial-shadow: 0 18px 38px -16px rgba(0, 0, 0, 0.9), 0 2px 0 rgba(255, 255, 255, 0.05) inset;
+  --knob-face: linear-gradient(165deg, #2d3138 0%, #1b1e23 100%);
 }
 
 /* ---------- Light ---------- */
 :root[data-theme='light'] {
   color-scheme: light;
 
-  --bg-void: #e7e6e3;
-  --bg-app: #f4f3f1;
-  --bg-chrome: #eceae7;
-  --bg-panel: rgba(255, 255, 255, 0.72);
-  --bg-panel-hover: rgba(255, 255, 255, 0.92);
+  --bg-void: #e6ecf4;
+  --bg-app: #f5f7fa;
+  --bg-chrome: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-panel-hover: #f7f9fc;
   --bg-elevated: #ffffff;
-  --bg-sunken: rgba(16, 14, 11, 0.05);
-  --bg-scrim: rgba(244, 243, 241, 0.76);
+  --bg-sunken: #eef2f8;
+  --bg-scrim: rgba(245, 247, 250, 0.8);
 
-  --stroke-hairline: rgba(22, 20, 16, 0.1);
-  --stroke-strong: rgba(22, 20, 16, 0.2);
-  --stroke-inset: rgba(22, 20, 16, 0.08);
+  --stroke-hairline: #e4e9f0;
+  --stroke-strong: #ccd5e0;
+  --stroke-inset: rgba(31, 35, 41, 0.08);
 
-  --text-primary: #16150f;
-  --text-secondary: rgba(22, 21, 15, 0.64);
-  --text-tertiary: rgba(22, 21, 15, 0.42);
+  --text-primary: #1f2329;
+  --text-secondary: #5a6472;
+  --text-tertiary: #8a94a6;
   --text-inverse: #ffffff;
 
-  --accent: #b76e18;
-  --accent-bright: #d98a2b;
-  --accent-dim: rgba(183, 110, 24, 0.13);
-  --accent-glow: rgba(183, 110, 24, 0.24);
+  --accent: #1890ff;
+  --accent-bright: #4da8ff;
+  --accent-strong: #0d7ae6;
+  --accent-dim: rgba(24, 144, 255, 0.1);
+  --accent-glow: rgba(24, 144, 255, 0.26);
   --accent-text: #ffffff;
 
-  --shadow-sm: 0 1px 2px rgba(22, 20, 16, 0.08);
-  --shadow-md: 0 8px 24px -10px rgba(22, 20, 16, 0.24);
-  --shadow-lg: 0 28px 64px -24px rgba(22, 20, 16, 0.3);
-  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-sm: 0 1px 2px rgba(31, 35, 41, 0.07);
+  --shadow-md: 0 8px 24px -10px rgba(31, 41, 55, 0.18);
+  --shadow-lg: 0 28px 64px -24px rgba(31, 41, 55, 0.24);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
-  --halo-a: rgba(183, 110, 24, 0.1);
-  --halo-b: rgba(58, 160, 232, 0.08);
+  --halo-a: rgba(24, 144, 255, 0.1);
+  --halo-b: rgba(120, 90, 255, 0.05);
+
+  --dial-face: linear-gradient(160deg, #ffffff 0%, #f2f5fa 55%, #e8edf5 100%);
+  --dial-rim: rgba(31, 35, 41, 0.09);
+  --dial-well: #eef2f8;
+  --dial-key: rgba(31, 35, 41, 0.035);
+  --dial-key-hover: rgba(24, 144, 255, 0.09);
+  --dial-shadow: 0 16px 34px -18px rgba(31, 41, 55, 0.35), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  --knob-face: linear-gradient(165deg, #ffffff 0%, #eef2f8 100%);
 }

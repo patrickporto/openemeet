@@ -91,28 +91,42 @@ export function registerIpcHandlers(): void {
     return publishState(id)
   })
 
+  // Preset edits change the tray menu and the UI. Re-emitting on the manager
+  // reaches both without ipc <-> tray importing each other.
+  const publishPresets = () => cameraManager.emit('changed', cameraManager.list())
+
   handle(IPC.presetsList, (id: string) => presets.listPresets(id))
   handle(IPC.presetsSave, async (id: string, name: string) => {
     const position = await cameraManager.get(id).getPtz()
-    return presets.savePreset(id, name, position)
+    const saved = presets.savePreset(id, name, position)
+    publishPresets()
+    return saved
   })
   handle(IPC.presetsRename, (id: string, presetId: string, name: string) => {
     const trimmed = name.trim()
     if (!trimmed) throw new Error('Preset name cannot be empty')
-    return presets.updatePreset(id, presetId, { name: trimmed })
+    const renamed = presets.updatePreset(id, presetId, { name: trimmed })
+    publishPresets()
+    return renamed
   })
   handle(IPC.presetsOverwrite, async (id: string, presetId: string) => {
     const position = await cameraManager.get(id).getPtz()
-    return presets.updatePreset(id, presetId, position)
+    const updated = presets.updatePreset(id, presetId, position)
+    publishPresets()
+    return updated
   })
-  handle(IPC.presetsRemove, (id: string, presetId: string) => presets.deletePreset(id, presetId))
+  handle(IPC.presetsRemove, (id: string, presetId: string) => {
+    presets.deletePreset(id, presetId)
+    publishPresets()
+  })
   handle(IPC.presetsApply, async (id: string, presetId: string) => {
     const preset = presets.listPresets(id).find((p) => p.id === presetId)
     if (!preset) throw new Error('Preset not found')
 
     const controller = cameraManager.get(id)
-    await controller.setPtz({ pan: preset.pan, tilt: preset.tilt, zoom: preset.zoom })
-    return controller.getPtz()
+    const position = await controller.applyPreset(preset)
+    broadcast(IPC.camerasChanged, cameraManager.list())
+    return position
   })
 
   handle(IPC.settingsGet, () => settings().all)

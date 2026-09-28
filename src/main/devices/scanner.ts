@@ -105,7 +105,10 @@ export async function scanCameras(options: ScanOptions): Promise<Camera[]> {
         ptz: isPixy,
         hidPermissionDenied: Boolean(hidrawDevice) && !(access.readable && access.writable),
       },
-      state: { tracking: 'unknown', gesture: 'unknown', audio: 'unknown', autoPrivacySeconds: null },
+      state: {
+        tracking: 'unknown', gesture: 'unknown', audio: 'unknown',
+        autoPrivacySeconds: null, activePresetId: null,
+      },
     })
   }
 

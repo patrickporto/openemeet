@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Camera, Preset } from '@shared/types'
 import { useI18n } from '../i18n/I18nProvider'
 import { useToast } from '../hooks/useToast'
-import { Button, Card, EmptyState, Panel } from './ui'
+import { Badge, Button, Card, EmptyState, Panel } from './ui'
 import './PresetsPanel.css'
 
 export function PresetsPanel({
@@ -74,7 +74,10 @@ export function PresetsPanel({
       ) : (
         <div className="presets__list">
           {presets.map((preset) => (
-            <div key={preset.id} className="presetRow">
+            <div
+              key={preset.id}
+              className={`presetRow ${camera.state.activePresetId === preset.id ? 'is-active' : ''}`}
+            >
               <div className="presetRow__main">
                 {editing === preset.id ? (
                   <input
@@ -107,6 +110,9 @@ export function PresetsPanel({
                   </button>
                 )}
                 {/* Presets are stored in degrees, exactly as the PTZ panel reports them. */}
+                {camera.state.activePresetId === preset.id && (
+                  <Badge tone="accent">{t('presets.active')}</Badge>
+                )}
                 <span className="presetRow__coords mono">
                   {preset.pan > 0 ? '+' : ''}
                   {preset.pan}&deg; · {preset.tilt > 0 ? '+' : ''}

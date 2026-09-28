@@ -37,6 +37,8 @@ export interface CameraState {
   gesture: GestureState
   audio: AudioState
   autoPrivacySeconds: number | null
+  /** Preset whose framing the camera currently holds; null once moved by hand. */
+  activePresetId: string | null
 }
 
 export interface Camera {

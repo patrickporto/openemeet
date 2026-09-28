@@ -1,0 +1,268 @@
+.remote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  user-select: none;
+}
+
+.remote.is-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ---------- Dial: the physical body of the remote ---------- */
+.remote__dial {
+  position: relative;
+  width: 252px;
+  height: 252px;
+  border-radius: 50%;
+  background: var(--dial-face);
+  border: 1px solid var(--dial-rim);
+  box-shadow: var(--dial-shadow);
+  overflow: hidden;
+  /* Establishes the ring the direction keys are cut from. */
+  isolation: isolate;
+}
+
+.remote__dial:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Hairline seams between the four keys */
+.remote__crosshair {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    linear-gradient(var(--dial-rim), var(--dial-rim)) center / 1px 100% no-repeat,
+    linear-gradient(90deg, var(--dial-rim), var(--dial-rim)) center / 100% 1px no-repeat;
+  opacity: 0.5;
+  transform: rotate(45deg);
+}
+
+/* ---------- Direction keys: true quadrant wedges ---------- */
+.remote__key {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  background: var(--dial-key);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.remote__key:disabled {
+  cursor: not-allowed;
+}
+
+.remote__key--up {
+  clip-path: polygon(50% 50%, 0 0, 100% 0);
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 26px;
+}
+
+.remote__key--right {
+  clip-path: polygon(50% 50%, 100% 0, 100% 100%);
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 26px;
+}
+
+.remote__key--down {
+  clip-path: polygon(50% 50%, 100% 100%, 0 100%);
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 26px;
+}
+
+.remote__key--left {
+  clip-path: polygon(50% 50%, 0 100%, 0 0);
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 26px;
+}
+
+.remote__key:hover:not(:disabled) {
+  background: var(--dial-key-hover);
+}
+
+.remote__key.is-pressed:not(:disabled) {
+  background: var(--accent-dim);
+}
+
+.remote__glyph {
+  display: flex;
+  color: var(--text-tertiary);
+  transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.remote__key:hover:not(:disabled) .remote__glyph {
+  color: var(--text-secondary);
+}
+
+.remote__key.is-pressed:not(:disabled) .remote__glyph {
+  color: var(--accent);
+}
+
+/* Point each chevron outward from the centre */
+.remote__key--right .remote__glyph {
+  transform: rotate(90deg);
+}
+.remote__key--down .remote__glyph {
+  transform: rotate(180deg);
+}
+.remote__key--left .remote__glyph {
+  transform: rotate(-90deg);
+}
+
+.remote__key--up.is-pressed .remote__glyph {
+  transform: translateY(-2px);
+}
+.remote__key--right.is-pressed .remote__glyph {
+  transform: rotate(90deg) translateY(-2px);
+}
+.remote__key--down.is-pressed .remote__glyph {
+  transform: rotate(180deg) translateY(-2px);
+}
+.remote__key--left.is-pressed .remote__glyph {
+  transform: rotate(-90deg) translateY(-2px);
+}
+
+/* ---------- Home key ---------- */
+.remote__home {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  transform: translate(-50%, -50%);
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: var(--knob-face);
+  border: 1px solid var(--dial-rim);
+  box-shadow:
+    0 8px 18px -8px rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.remote__home:hover:not(:disabled) {
+  box-shadow:
+    0 10px 22px -8px rgba(0, 0, 0, 0.6),
+    0 0 0 3px var(--accent-dim);
+}
+
+.remote__home:active:not(:disabled) {
+  transform: translate(-50%, -50%) scale(0.955);
+}
+
+/* Position display: the knob shows where the lens points. */
+.remote__map {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px dashed var(--stroke-strong);
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remote__mapDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+/* Dead centre reads as "home", so the dot goes quiet. */
+.remote__mapDot.is-centred {
+  background: var(--text-tertiary);
+  box-shadow: none;
+}
+
+.remote__home:hover:not(:disabled) .remote__map {
+  border-color: var(--accent-glow);
+}
+
+/* ---------- Zoom rocker ---------- */
+.remote__zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-sunken);
+  border: 1px solid var(--stroke-hairline);
+}
+
+.remote__zoomKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 30px;
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.remote__zoomKey:hover:not(:disabled) {
+  background: var(--bg-panel-hover);
+  color: var(--text-primary);
+}
+
+.remote__zoomKey:active:not(:disabled) {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.remote__zoomKey:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.remote__zoomValue {
+  min-width: 62px;
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ---------- Readout ---------- */
+.remote__readout {
+  display: flex;
+  gap: var(--sp-6);
+}
+
+.remote__readout > div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.remote__readout dt {
+  font-family: var(--font-ui);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.remote__readout dd {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}

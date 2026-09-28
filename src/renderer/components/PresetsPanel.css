@@ -30,8 +30,18 @@
 .presetRow__main {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: flex-start;
+  gap: 3px;
   min-width: 0;
+}
+
+.presetRow.is-active {
+  border-color: var(--accent-glow);
+  background: var(--accent-dim);
+}
+
+.presetRow.is-active .presetRow__name {
+  color: var(--accent);
 }
 
 .presetRow__name {

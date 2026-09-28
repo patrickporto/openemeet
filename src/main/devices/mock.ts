@@ -67,7 +67,9 @@ export class MockCameraController extends CameraController {
   private readonly controls = new Map<string, V4l2Control>()
 
   constructor(camera: Camera) {
-    super(camera, { tracking: 'idle', gesture: 'off', audio: 'nc', autoPrivacySeconds: null })
+    super(camera, {
+      tracking: 'idle', gesture: 'off', audio: 'nc', autoPrivacySeconds: null, activePresetId: null,
+    })
     for (const control of mockControls()) this.controls.set(control.name, { ...control })
   }
 
@@ -143,6 +145,6 @@ export function createMockCamera(index: number): Camera {
     isPixy: true,
     mock: true,
     capabilities: { hid: true, ptz: true, hidPermissionDenied: false },
-    state: { tracking: 'idle', gesture: 'off', audio: 'nc', autoPrivacySeconds: null },
+    state: { tracking: 'idle', gesture: 'off', audio: 'nc', autoPrivacySeconds: null, activePresetId: null },
   }
 }

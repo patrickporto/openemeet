@@ -38,6 +38,7 @@ export class CameraController {
       gesture: 'unknown',
       audio: 'unknown',
       autoPrivacySeconds: null,
+      activePresetId: null,
       ...restoredState,
     }
   }
@@ -120,6 +121,7 @@ export class CameraController {
       )
     }
 
+    this.clearActivePreset()
     await this.writePtz(values)
   }
 
@@ -127,6 +129,26 @@ export class CameraController {
     if (Object.keys(values).length === 0) return
     await v4l2.setControls(this.camera.videoDevice, values)
     this.invalidateControls()
+  }
+
+  /**
+   * Moves to a preset and remembers it, so the tray and UI can show which
+   * framing is live. Any later manual move clears the association.
+   */
+  async applyPreset(preset: { id: string; pan: number; tilt: number; zoom: number }): Promise<PtzPosition> {
+    await this.setPtz({ pan: preset.pan, tilt: preset.tilt, zoom: preset.zoom })
+    this.state.activePresetId = preset.id
+    return this.getPtz()
+  }
+
+  /** Called by every hand-driven move: the framing is no longer a preset. */
+  private clearActivePreset(): void {
+    this.state.activePresetId = null
+  }
+
+  /** Used on startup to re-derive which preset the camera is already holding. */
+  setActivePreset(presetId: string | null): void {
+    this.state.activePresetId = presetId
   }
 
   async nudge(axis: 'pan' | 'tilt', degrees: number): Promise<PtzPosition> {
@@ -144,6 +166,7 @@ export class CameraController {
 
   async center(): Promise<PtzPosition> {
     await this.setPtz({ pan: 0, tilt: 0, zoom: PTZ_LIMITS.zoom_absolute.min })
+    this.clearActivePreset()
     return this.getPtz()
   }
 
