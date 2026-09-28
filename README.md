@@ -1,5 +1,9 @@
 # openemeet
 
+[![CI](https://github.com/patrickporto/openemeet/actions/workflows/ci.yml/badge.svg)](https://github.com/patrickporto/openemeet/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/patrickporto/openemeet?sort=semver)](https://github.com/patrickporto/openemeet/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A native Linux control center for **EMEET PIXY** webcams, built with Electron.
 
 The official EMEET software has no Linux build. openemeet talks to the camera
@@ -35,9 +39,12 @@ Multiple PIXY cameras are supported at once, each with its own presets.
 
 ### AppImage (recommended)
 
+Grab the latest build from the
+[releases page](https://github.com/patrickporto/openemeet/releases/latest):
+
 ```bash
-chmod +x openemeet-0.1.0-x86_64.AppImage
-./openemeet-0.1.0-x86_64.AppImage
+chmod +x openemeet-*-x86_64.AppImage
+./openemeet-*-x86_64.AppImage
 ```
 
 ### Required: udev rule
@@ -129,8 +136,9 @@ zoom 100–150.
 
 ## Credits
 
-The HID protocol was derived from the
-[Emeet_pixy_for_linux](https://github.com/) reference implementation.
+The HID control protocol was derived from the `Emeet_pixy_for_linux`
+reference implementation, and re-verified against an EMEET PIXY
+(serial-reported firmware, 19 UVC controls) during development.
 
 ## License
 
