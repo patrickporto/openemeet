@@ -1,0 +1,10 @@
+# openemeet - EMEET PIXY access rules
+# Grants the logged-in user access to the proprietary HID control channel
+# (AI tracking, gestures, audio modes, privacy) and the UVC video nodes.
+#
+# Install:
+#   sudo cp 99-openemeet-pixy.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules && sudo udevadm trigger
+# Then unplug and reconnect the camera.
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="328f", ATTRS{idProduct}=="00c0", MODE="0660", GROUP="video", TAG+="uaccess"
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="328f", ATTRS{idProduct}=="00c0", MODE="0660", GROUP="video", TAG+="uaccess"

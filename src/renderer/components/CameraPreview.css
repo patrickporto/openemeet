@@ -1,0 +1,108 @@
+.preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--stroke-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.preview--idle,
+.preview--error,
+.preview--mock {
+  flex-direction: column;
+  gap: var(--sp-2);
+  background: var(--bg-sunken);
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  text-align: center;
+  padding: var(--sp-4);
+}
+
+.preview--error {
+  color: var(--signal-alert);
+}
+
+.preview--error small {
+  color: var(--text-tertiary);
+  font-size: var(--text-2xs);
+  max-width: 90%;
+  overflow-wrap: anywhere;
+}
+
+/* Demo mode: colour bars so the framing tools have something to sit against */
+.preview--mock {
+  background: #101014;
+  justify-content: stretch;
+  padding: 0;
+  gap: 0;
+}
+
+.preview__mockBars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.preview__mockBars span {
+  flex: 1;
+  opacity: 0.42;
+}
+
+.preview__mockGrid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image:
+    linear-gradient(var(--stroke-hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stroke-hairline) 1px, transparent 1px);
+  background-size: 33.333% 33.333%;
+}
+
+.preview__mockLabel {
+  position: absolute;
+  bottom: var(--sp-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(0, 0, 0, 0.55);
+  padding: 3px var(--sp-2);
+  border-radius: var(--radius-sm);
+}
+
+/* Recording-style tally light */
+.preview__tally {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal-live);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal-live) 24%, transparent);
+  animation: tally 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes tally {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}

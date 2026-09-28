@@ -1,0 +1,40 @@
+appId: dev.openemeet.app
+productName: openemeet
+copyright: openemeet contributors
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - out/**/*
+  - resources/**/*
+  - package.json
+
+extraResources:
+  - from: resources/99-openemeet-pixy.rules
+    to: udev/99-openemeet-pixy.rules
+
+linux:
+  target:
+    - AppImage
+  # Ties running windows to the .desktop entry, so GNOME groups the app
+  # correctly in the dash and the icon shows on minimised windows.
+  syncDesktopName: true
+  category: AudioVideo;Video;Settings
+  icon: build/icons
+  synopsis: Control center for EMEET PIXY cameras on Linux
+  description: >-
+    openemeet is a native Linux control center for EMEET PIXY webcams.
+    It drives pan/tilt/zoom and image controls over UVC, and AI tracking,
+    gesture control, audio profiles and privacy mode over the PIXY control
+    channel. Supports multiple cameras with per-device presets.
+  desktop:
+    entry:
+      Name: openemeet
+      Comment: Control center for EMEET PIXY cameras
+      Keywords: camera;webcam;emeet;pixy;ptz;video;
+      StartupWMClass: openemeet
+
+appImage:
+  artifactName: ${productName}-${version}-${arch}.AppImage

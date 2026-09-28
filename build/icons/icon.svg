@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3A3D45"/>
+      <stop offset="0.45" stop-color="#22242A"/>
+      <stop offset="1" stop-color="#121317"/>
+    </linearGradient>
+    <radialGradient id="iris" cx="0.42" cy="0.36" r="0.75">
+      <stop offset="0" stop-color="#FFD59B"/>
+      <stop offset="0.35" stop-color="#F2A03C"/>
+      <stop offset="0.75" stop-color="#8A4A12"/>
+      <stop offset="1" stop-color="#1B1207"/>
+    </radialGradient>
+    <linearGradient id="glassSheen" x1="0.15" y1="0.1" x2="0.7" y2="0.85">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="26" y="26" width="460" height="460" rx="112" fill="url(#body)"/>
+  <rect x="26.5" y="26.5" width="459" height="459" rx="111.5" fill="none" stroke="url(#rim)" stroke-width="3"/>
+
+  <!-- lens barrel -->
+  <circle cx="256" cy="256" r="164" fill="#0C0D10"/>
+  <circle cx="256" cy="256" r="164" fill="none" stroke="#4A4E58" stroke-width="5"/>
+  <circle cx="256" cy="256" r="142" fill="none" stroke="#2B2E35" stroke-width="10"/>
+
+  <!-- aperture blades -->
+  <g fill="none" stroke="#F2A03C" stroke-opacity="0.9" stroke-width="7" stroke-linecap="round">
+    <path d="M256 128 A128 128 0 0 1 366.9 192"/>
+    <path d="M366.9 192 A128 128 0 0 1 366.9 320"/>
+    <path d="M366.9 320 A128 128 0 0 1 256 384"/>
+    <path d="M256 384 A128 128 0 0 1 145.1 320"/>
+    <path d="M145.1 320 A128 128 0 0 1 145.1 192"/>
+    <path d="M145.1 192 A128 128 0 0 1 256 128"/>
+  </g>
+
+  <circle cx="256" cy="256" r="96" fill="url(#iris)"/>
+  <circle cx="256" cy="256" r="96" fill="url(#glassSheen)"/>
+  <circle cx="256" cy="256" r="42" fill="#0A0B0D" fill-opacity="0.82"/>
+  <circle cx="221" cy="219" r="24" fill="#FFFFFF" fill-opacity="0.42"/>
+  <circle cx="292" cy="300" r="10" fill="#FFD59B" fill-opacity="0.5"/>
+
+  <!-- status tally -->
+  <circle cx="396" cy="118" r="20" fill="#3DDC97"/>
+  <circle cx="396" cy="118" r="20" fill="none" stroke="#0C0D10" stroke-width="6"/>
+</svg>

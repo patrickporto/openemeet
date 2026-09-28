@@ -1,0 +1,25 @@
+.smart {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+.smart__modeHint {
+  margin-top: var(--sp-3);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  min-height: 2.4em;
+}
+
+.smart__warnTitle {
+  font-size: var(--text-md);
+  font-weight: 550;
+  margin-bottom: var(--sp-2);
+}
+
+.smart__warnHint {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  max-width: 68ch;
+}

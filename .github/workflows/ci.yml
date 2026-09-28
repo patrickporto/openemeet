@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same branch to save runner minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Typecheck and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck (main + renderer)
+        run: npm run typecheck
+
+      - name: Build bundles
+        run: npx electron-vite build
+
+      - name: Package AppImage
+        run: npx electron-builder --linux AppImage --publish never
+
+      # Keeps a downloadable build on every commit, not just on tags.
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openemeet-AppImage
+          path: dist/*.AppImage
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,90 @@
+.boot {
+  height: 100%;
+  background: var(--bg-app);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-app);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Soft atmosphere so large flat areas are not dead space */
+.app::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 78% 4%, var(--halo-a), transparent 70%),
+    radial-gradient(48% 40% at 6% 96%, var(--halo-b), transparent 72%);
+}
+
+.app__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.app__content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Toasts */
+.toasts {
+  position: fixed;
+  bottom: var(--sp-5);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  pointer-events: none;
+  max-width: min(560px, calc(100vw - var(--sp-8)));
+}
+
+.toast {
+  pointer-events: auto;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--stroke-hairline);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  text-align: left;
+  backdrop-filter: blur(20px) saturate(140%);
+  animation: toastIn var(--dur-slow) var(--ease-out);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.toast--success {
+  border-color: color-mix(in srgb, var(--signal-live) 40%, transparent);
+}
+
+.toast--error {
+  border-color: color-mix(in srgb, var(--signal-alert) 46%, transparent);
+  color: var(--signal-alert);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

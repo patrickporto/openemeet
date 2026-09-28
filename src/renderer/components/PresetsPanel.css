@@ -1,0 +1,72 @@
+.presets__saveRow {
+  display: flex;
+  gap: var(--sp-2);
+  max-width: 520px;
+}
+
+.presets__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.presetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-panel);
+  border: 1px solid var(--stroke-hairline);
+  border-radius: var(--radius-md);
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.presetRow:hover {
+  background: var(--bg-panel-hover);
+  border-color: var(--stroke-strong);
+}
+
+.presetRow__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.presetRow__name {
+  font-size: var(--text-base);
+  font-weight: 550;
+  text-align: left;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presetRow__name:hover {
+  color: var(--accent);
+}
+
+.presetRow__rename {
+  height: 28px;
+  max-width: 260px;
+}
+
+.presetRow__coords {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.presetRow__actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.presetRow:hover .presetRow__actions,
+.presetRow:focus-within .presetRow__actions {
+  opacity: 1;
+}
