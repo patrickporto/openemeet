@@ -82,6 +82,8 @@ export interface AppSettings {
   locale: 'pt-BR' | 'en'
   theme: 'dark' | 'light' | 'system'
   startMinimized: boolean
+  /** Launch with the desktop session (XDG autostart entry). */
+  launchAtLogin: boolean
   closeToTray: boolean
   jogStepDegrees: number
   lastCameraId: string | null

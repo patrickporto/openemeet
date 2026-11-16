@@ -2,6 +2,8 @@ import { BrowserWindow, app } from 'electron'
 import { IPC } from '../shared/ipc.js'
 import { cameraManager } from './devices/manager.js'
 import { broadcast, registerIpcHandlers } from './ipc.js'
+import { settings } from './store/settings.js'
+import { reconcileAutostart } from './system/autostart.js'
 import { createTray, destroyTray, hasTray, refreshTrayMenu } from './tray.js'
 import { createMainWindow, markQuitting, showMainWindow } from './window.js'
 import { log } from './logger.js'
@@ -22,6 +24,10 @@ async function bootstrap(): Promise<void> {
   await app.whenReady()
 
   registerIpcHandlers()
+
+  // The desktop's startup-apps UI may have removed or added the entry.
+  const autostart = reconcileAutostart()
+  if (settings().get('launchAtLogin') !== autostart) settings().set('launchAtLogin', autostart)
 
   cameraManager.on('changed', (cameras) => broadcast(IPC.camerasChanged, cameras))
   cameraManager.startWatching()

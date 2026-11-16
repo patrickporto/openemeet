@@ -2,6 +2,7 @@ import { BrowserWindow, shell } from 'electron'
 import { join } from 'node:path'
 import { IPC } from '../shared/ipc.js'
 import { settings } from './store/settings.js'
+import { launchedAtLogin } from './system/autostart.js'
 import { isTrayLive } from './tray-state.js'
 
 let mainWindow: BrowserWindow | null = null
@@ -19,7 +20,8 @@ export function getMainWindow(): BrowserWindow | null {
 export function createMainWindow(): BrowserWindow {
   if (mainWindow && !mainWindow.isDestroyed()) return mainWindow
 
-  const startMinimized = settings().get('startMinimized')
+  // Login launches stay out of the way, like an explicit start-minimised.
+  const startMinimized = settings().get('startMinimized') || launchedAtLogin()
 
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -40,7 +42,8 @@ export function createMainWindow(): BrowserWindow {
   })
 
   mainWindow.once('ready-to-show', () => {
-    if (!startMinimized) mainWindow?.show()
+    // Never start hidden without a tray icon to bring the window back.
+    if (!startMinimized || !isTrayLive()) mainWindow?.show()
   })
 
   const emitMaximize = () =>

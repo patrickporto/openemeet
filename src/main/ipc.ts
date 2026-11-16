@@ -4,6 +4,7 @@ import type { AppSettings } from '../shared/types.js'
 import { cameraManager } from './devices/manager.js'
 import * as presets from './store/presets.js'
 import { settings } from './store/settings.js'
+import { setAutostart } from './system/autostart.js'
 import { UDEV_RULE_PATH, collectDiagnostics, udevInstallCommand } from './system/diagnostics.js'
 import { log } from './logger.js'
 
@@ -132,6 +133,10 @@ export function registerIpcHandlers(): void {
   handle(IPC.settingsGet, () => settings().all)
   handle(IPC.settingsPatch, async (values: Partial<AppSettings>) => {
     const previous = settings().all
+    if (values.launchAtLogin !== undefined && values.launchAtLogin !== previous.launchAtLogin) {
+      // Touch the filesystem first so a failure leaves the setting unchanged.
+      setAutostart(values.launchAtLogin)
+    }
     const next = settings().patch(values)
     broadcast(IPC.settingsChanged, next)
 

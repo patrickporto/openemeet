@@ -30,6 +30,7 @@ Multiple PIXY cameras are supported at once, each with its own presets.
 | **Presets** | Saved framings scoped per camera by serial, applied from the window or the tray, with the live one marked |
 | **Multi-camera** | Cameras paired to their HID node via USB topology, so two PIXYs never cross wires |
 | **Tray** | GNOME AppIndicator menu: camera mode, presets (showing which is live), audio, gestures and recentre without opening the window |
+| **Autostart** | Optional launch at login via an XDG autostart entry, opening quietly in the tray |
 | **Bilingual** | Português (pt-BR) and English, following your system locale on first run |
 | **Themes** | Dark, light, or follow the system |
 

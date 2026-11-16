@@ -91,6 +91,12 @@ export function SettingsPanel({
         <Card label={t('settings.behaviour')}>
           <div className="settings__group">
             <Toggle
+              label={t('settings.launchAtLogin')}
+              hint={t('settings.launchAtLoginHint')}
+              checked={settings.launchAtLogin}
+              onChange={(launchAtLogin) => onPatch({ launchAtLogin })}
+            />
+            <Toggle
               label={t('settings.closeToTray')}
               checked={settings.closeToTray}
               onChange={(closeToTray) => onPatch({ closeToTray })}

@@ -10,6 +10,7 @@ const DEFAULTS: PersistedSettings = {
   locale: 'pt-BR',
   theme: 'dark',
   startMinimized: false,
+  launchAtLogin: false,
   closeToTray: true,
   jogStepDegrees: 10,
   lastCameraId: null,
