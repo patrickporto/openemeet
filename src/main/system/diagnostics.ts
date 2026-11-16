@@ -4,6 +4,7 @@ import { promisify } from 'node:util'
 import { userInfo } from 'node:os'
 import type { SystemDiagnostics } from '../../shared/types.js'
 import { isV4l2CtlInstalled } from '../devices/v4l2.js'
+import { findLoopbackDevice, isFfmpegInstalled } from '../vcam/loopback.js'
 import { PIXY_PRODUCT_ID, PIXY_VENDOR_ID } from '../../shared/types.js'
 
 const exec = promisify(execFile)
@@ -84,12 +85,15 @@ async function detectAppIndicator(): Promise<SystemDiagnostics['gnomeAppIndicato
 }
 
 export async function collectDiagnostics(): Promise<SystemDiagnostics> {
-  const [v4l2CtlInstalled, udevRuleInstalled, userInVideoGroup, extension] = await Promise.all([
-    isV4l2CtlInstalled(),
-    hasUdevRule(),
-    inVideoGroup(),
-    detectAppIndicator(),
-  ])
+  const [v4l2CtlInstalled, udevRuleInstalled, userInVideoGroup, extension, ffmpegInstalled, loopback] =
+    await Promise.all([
+      isV4l2CtlInstalled(),
+      hasUdevRule(),
+      inVideoGroup(),
+      detectAppIndicator(),
+      isFfmpegInstalled(),
+      findLoopbackDevice(),
+    ])
 
   return {
     v4l2CtlInstalled,
@@ -100,5 +104,7 @@ export async function collectDiagnostics(): Promise<SystemDiagnostics> {
     trayAvailable: extension === 'enabled' || extension === 'not-gnome',
     desktop: process.env.XDG_CURRENT_DESKTOP ?? 'unknown',
     sessionType: process.env.XDG_SESSION_TYPE ?? 'unknown',
+    ffmpegInstalled,
+    loopbackReady: loopback !== null,
   }
 }

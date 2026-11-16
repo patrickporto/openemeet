@@ -48,6 +48,16 @@ const api: OpenemeetApi = {
     patch: (values) => ipcRenderer.invoke(IPC.settingsPatch, values),
     onChanged: (handler) => subscribe(IPC.settingsChanged, handler),
   },
+  vcam: {
+    status: () => ipcRenderer.invoke(IPC.vcamStatus),
+    configure: (values) => ipcRenderer.invoke(IPC.vcamConfigure, values),
+    onStatus: (handler) => subscribe(IPC.vcamStatusChanged, handler),
+    setupCommand: () => ipcRenderer.invoke(IPC.vcamSetupCommand),
+    listBackgrounds: () => ipcRenderer.invoke(IPC.vcamListBackgrounds),
+    addBackground: () => ipcRenderer.invoke(IPC.vcamAddBackground),
+    removeBackground: (id) => ipcRenderer.invoke(IPC.vcamRemoveBackground, id),
+    readBackground: (id) => ipcRenderer.invoke(IPC.vcamReadBackground, id),
+  },
   system: {
     diagnostics: () => ipcRenderer.invoke(IPC.systemDiagnostics),
     udevHelp: () => ipcRenderer.invoke(IPC.systemUdevHelp),

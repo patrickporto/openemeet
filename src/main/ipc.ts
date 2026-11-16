@@ -1,12 +1,15 @@
 import { BrowserWindow, clipboard, ipcMain, shell } from 'electron'
 import { IPC } from '../shared/ipc.js'
-import type { AppSettings } from '../shared/types.js'
+import type { AppSettings, VirtualCameraSettings } from '../shared/types.js'
 import { cameraManager } from './devices/manager.js'
 import * as presets from './store/presets.js'
 import { settings } from './store/settings.js'
 import { setAutostart } from './system/autostart.js'
 import { UDEV_RULE_PATH, collectDiagnostics, udevInstallCommand } from './system/diagnostics.js'
 import { log } from './logger.js'
+import { virtualCamera } from './vcam/service.js'
+import { loopbackSetupCommand } from './vcam/loopback.js'
+import * as backgrounds from './vcam/backgrounds.js'
 
 /** Broadcasts an event to every open window. */
 export function broadcast(channel: string, payload?: unknown): void {
@@ -139,6 +142,7 @@ export function registerIpcHandlers(): void {
     }
     const next = settings().patch(values)
     broadcast(IPC.settingsChanged, next)
+    if (previous.locale !== next.locale) virtualCamera.pushJob()
 
     // Device visibility changed, so the camera list must be rebuilt.
     if (
@@ -149,6 +153,25 @@ export function registerIpcHandlers(): void {
     }
     return next
   })
+
+  handle(IPC.vcamStatus, () => virtualCamera.status())
+  handle(IPC.vcamConfigure, async (values: Partial<VirtualCameraSettings>) => {
+    const next = await virtualCamera.configure(values)
+    broadcast(IPC.settingsChanged, settings().all)
+    return next
+  })
+  handle(IPC.vcamSetupCommand, () => loopbackSetupCommand())
+  handle(IPC.vcamListBackgrounds, () => backgrounds.listBackgrounds())
+  handle(IPC.vcamAddBackground, () => backgrounds.addBackground(BrowserWindow.getFocusedWindow()))
+  handle(IPC.vcamRemoveBackground, async (id: string) => {
+    await backgrounds.removeBackground(id)
+    // Never leave the virtual camera pointing at a deleted file.
+    if (virtualCamera.config.image === id) {
+      await virtualCamera.configure({ image: 'builtin:studio' })
+      broadcast(IPC.settingsChanged, settings().all)
+    }
+  })
+  handle(IPC.vcamReadBackground, (id: string) => backgrounds.readBackground(id))
 
   handle(IPC.systemDiagnostics, () => collectDiagnostics())
   handle(IPC.systemUdevHelp, () => ({ command: udevInstallCommand(), rulePath: UDEV_RULE_PATH }))

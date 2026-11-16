@@ -7,6 +7,7 @@ import { reconcileAutostart } from './system/autostart.js'
 import { createTray, destroyTray, hasTray, refreshTrayMenu } from './tray.js'
 import { createMainWindow, markQuitting, showMainWindow } from './window.js'
 import { log } from './logger.js'
+import { virtualCamera } from './vcam/service.js'
 
 // A second launch should surface the running instance, not start another app.
 if (!app.requestSingleInstanceLock()) {
@@ -33,6 +34,16 @@ async function bootstrap(): Promise<void> {
   cameraManager.startWatching()
   await cameraManager.refresh()
 
+  // fps updates arrive every second; the tray only cares about state changes.
+  let trayVcamState = ''
+  virtualCamera.on('status', (status) => {
+    broadcast(IPC.vcamStatusChanged, status)
+    if (status.state === trayVcamState) return
+    trayVcamState = status.state
+    refreshTrayMenu()
+  })
+  virtualCamera.init()
+
   createMainWindow()
   createTray()
   refreshTrayMenu()
@@ -45,6 +56,7 @@ async function bootstrap(): Promise<void> {
   app.on('before-quit', () => {
     markQuitting()
     cameraManager.stop()
+    virtualCamera.stop()
     destroyTray()
   })
 

@@ -23,10 +23,12 @@ export function SettingsPanel({
   const { t } = useI18n()
   const [diagnostics, setDiagnostics] = useState<SystemDiagnostics | null>(null)
   const [udevCommand, setUdevCommand] = useState('')
+  const [loopbackCommand, setLoopbackCommand] = useState('')
 
   useEffect(() => {
     void window.openemeet.system.diagnostics().then(setDiagnostics)
     void window.openemeet.system.udevHelp().then((help) => setUdevCommand(help.command))
+    void window.openemeet.vcam.setupCommand().then(setLoopbackCommand)
   }, [])
 
   const checks: CheckRow[] = diagnostics
@@ -51,6 +53,13 @@ export function SettingsPanel({
             diagnostics.gnomeAppIndicatorExtension === 'disabled'
               ? 'diag.trayFixDisabled'
               : 'diag.trayFixMissing',
+        },
+        { key: 'diag.ffmpeg', ok: diagnostics.ffmpegInstalled, fix: 'diag.ffmpegFix' },
+        {
+          key: 'diag.loopback',
+          ok: diagnostics.loopbackReady,
+          fix: 'diag.loopbackFix',
+          command: loopbackCommand,
         },
       ]
     : []

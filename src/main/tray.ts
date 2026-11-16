@@ -10,6 +10,7 @@ import { broadcast } from './ipc.js'
 import { isTrayLive, setTrayLive } from './tray-state.js'
 import { markQuitting, showMainWindow } from './window.js'
 import { log } from './logger.js'
+import { virtualCamera } from './vcam/service.js'
 
 let tray: Tray | null = null
 
@@ -166,6 +167,24 @@ export function refreshTrayMenu(): void {
         submenu: cameraSubmenu(camera, true),
       })
     }
+  }
+
+  const vcam = virtualCamera.status()
+  template.push(
+    { type: 'separator' },
+    {
+      label: t('tray.virtualCamera'),
+      type: 'checkbox',
+      checked: virtualCamera.config.enabled,
+      click: () => void virtualCamera.configure({ enabled: !virtualCamera.config.enabled }),
+    },
+  )
+  // A broken setup is only fixable from the window, so point there.
+  if (vcam.state === 'error') {
+    template.push({
+      label: `  ${t('tray.virtualCameraFix')}`,
+      click: () => showMainWindow({ tab: 'effects' }),
+    })
   }
 
   template.push(

@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- MediaPipe compiles WebAssembly and injects its loader as a script. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' blob: data:; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; worker-src 'self' blob:"
+    />
+    <title>openemeet virtual camera</title>
+  </head>
+  <body>
+    <script type="module" src="./vcam/worker.ts"></script>
+  </body>
+</html>

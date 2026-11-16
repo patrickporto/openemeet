@@ -12,7 +12,9 @@ export default defineConfig({
   preload: {
     plugins: [externalizeDepsPlugin()],
     build: {
-      rollupOptions: { input: { index: resolve('src/preload/index.ts') } },
+      rollupOptions: {
+        input: { index: resolve('src/preload/index.ts'), vcam: resolve('src/preload/vcam.ts') },
+      },
     },
   },
   renderer: {
@@ -25,7 +27,9 @@ export default defineConfig({
     },
     plugins: [react()],
     build: {
-      rollupOptions: { input: { index: resolve('src/renderer/index.html') } },
+      rollupOptions: {
+        input: { index: resolve('src/renderer/index.html'), vcam: resolve('src/renderer/vcam.html') },
+      },
     },
   },
 })

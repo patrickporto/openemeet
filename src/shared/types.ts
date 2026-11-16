@@ -76,6 +76,72 @@ export interface SystemDiagnostics {
   gnomeAppIndicatorExtension: 'enabled' | 'disabled' | 'missing' | 'not-gnome'
   desktop: string
   sessionType: string
+  ffmpegInstalled: boolean
+  /** A v4l2loopback device exists to publish the virtual camera on. */
+  loopbackReady: boolean
+}
+
+// --- Virtual camera -----------------------------------------------------------
+
+export type BackgroundEffect = 'none' | 'blur' | 'image' | 'color'
+
+export interface VirtualCameraSettings {
+  /** The user wants the virtual camera published. */
+  enabled: boolean
+  /** Physical camera feeding the virtual one; null picks the first available. */
+  sourceCameraId: string | null
+  effect: BackgroundEffect
+  /** Blur strength, 0-100. */
+  blur: number
+  /** `builtin:<id>` or `custom:<file name>`. */
+  image: string
+  /** CSS hex colour for the solid background. */
+  color: string
+}
+
+export type VirtualCameraIssue =
+  /** v4l2loopback is not loaded, so there is no device to publish to. */
+  | 'no-loopback'
+  | 'no-ffmpeg'
+  /** The source camera is unplugged or not selected. */
+  | 'no-source'
+  /** Demo cameras have no real stream to process. */
+  | 'mock-source'
+
+export interface VirtualCameraStatus {
+  /** `paused`: publishing a placeholder because the source is in privacy mode. */
+  state: 'off' | 'starting' | 'running' | 'paused' | 'error'
+  /** Loopback node we publish to, e.g. /dev/video42. */
+  device: string | null
+  /** Name other apps list the virtual camera under. */
+  deviceLabel: string | null
+  sourceCameraId: string | null
+  issue: VirtualCameraIssue | null
+  /** Free-form error from the processing pipeline. */
+  error: string | null
+  fps: number
+}
+
+export interface CustomBackground {
+  /** `custom:<file name>` — same format as VirtualCameraSettings.image. */
+  id: string
+  name: string
+}
+
+/** Everything the background worker needs to render a frame. */
+export interface VirtualCameraJob {
+  run: boolean
+  device: string | null
+  /** Our own output's label, so the worker never captures itself. */
+  deviceLabel: string | null
+  source: { cameraId: string; v4l2Name: string; label: string } | null
+  /** Source is in privacy mode: it must not be captured at all. */
+  blocked: boolean
+  effect: BackgroundEffect
+  blur: number
+  image: string
+  color: string
+  locale: AppSettings['locale']
 }
 
 export interface AppSettings {
@@ -88,6 +154,7 @@ export interface AppSettings {
   jogStepDegrees: number
   lastCameraId: string | null
   mockDevices: boolean
+  virtualCamera: VirtualCameraSettings
 }
 
 /** Result envelope so the renderer never has to catch IPC rejections. */

@@ -3,13 +3,14 @@ import { useI18n } from '../i18n/I18nProvider'
 import type { TranslationKey } from '@shared/i18n'
 import './TitleBar.css'
 
-export type TabId = 'framing' | 'image' | 'smart' | 'presets' | 'settings'
+export type TabId = 'framing' | 'image' | 'smart' | 'presets' | 'effects' | 'settings'
 
 const TABS: { id: TabId; label: TranslationKey; icon: ReactElement }[] = [
   { id: 'framing', label: 'nav.framing', icon: <FramingIcon /> },
   { id: 'image', label: 'nav.image', icon: <ImageIcon /> },
   { id: 'smart', label: 'nav.smart', icon: <SmartIcon /> },
   { id: 'presets', label: 'nav.presets', icon: <PresetsIcon /> },
+  { id: 'effects', label: 'nav.effects', icon: <EffectsIcon /> },
   { id: 'settings', label: 'nav.settings', icon: <SettingsIcon /> },
 ]
 
@@ -117,6 +118,16 @@ function PresetsIcon() {
         strokeWidth="1.4"
         strokeLinejoin="round"
       />
+    </svg>
+  )
+}
+
+function EffectsIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="2" y="3" width="12" height="10" rx="2.5" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="8" cy="7" r="1.8" fill="currentColor" />
+      <path d="M4.8 13a3.2 3.2 0 0 1 6.4 0" fill="currentColor" />
     </svg>
   )
 }

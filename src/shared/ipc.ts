@@ -2,9 +2,13 @@ import type {
   AppSettings,
   Camera,
   CameraState,
+  CustomBackground,
   Preset,
   SystemDiagnostics,
   V4l2Control,
+  VirtualCameraJob,
+  VirtualCameraSettings,
+  VirtualCameraStatus,
 } from './types.js'
 
 export interface PtzPosition {
@@ -16,6 +20,27 @@ export interface PtzPosition {
 export interface UdevHelp {
   command: string
   rulePath: string
+}
+
+export interface BackgroundFile {
+  data: Uint8Array
+  mime: string
+}
+
+/** Surface exposed to the hidden background worker as `window.vcamHost`. */
+export interface VcamHostApi {
+  onJob(handler: (job: VirtualCameraJob) => void): () => void
+  /** Asks main to resend the current job (on worker boot). */
+  ready(): void
+  report(status: Partial<Pick<VirtualCameraStatus, 'state' | 'error' | 'fps'>>): void
+  readBackground(id: string): Promise<BackgroundFile>
+  sink: {
+    /** Starts ffmpeg writing to the loopback device. */
+    open(device: string, width: number, height: number, fps: number): void
+    /** Queues one RGBA frame. Returns false while ffmpeg is backed up. */
+    write(frame: Uint8Array): boolean
+    close(): void
+  }
 }
 
 /** The surface exposed to the renderer as `window.openemeet`. */
@@ -58,6 +83,17 @@ export interface OpenemeetApi {
     get(): Promise<AppSettings>
     patch(values: Partial<AppSettings>): Promise<AppSettings>
     onChanged(handler: (settings: AppSettings) => void): () => void
+  }
+  vcam: {
+    status(): Promise<VirtualCameraStatus>
+    configure(values: Partial<VirtualCameraSettings>): Promise<VirtualCameraSettings>
+    onStatus(handler: (status: VirtualCameraStatus) => void): () => void
+    setupCommand(): Promise<string>
+    listBackgrounds(): Promise<CustomBackground[]>
+    /** Opens a file picker; null when the user cancels. */
+    addBackground(): Promise<CustomBackground | null>
+    removeBackground(id: string): Promise<void>
+    readBackground(id: string): Promise<BackgroundFile>
   }
   system: {
     diagnostics(): Promise<SystemDiagnostics>
@@ -108,6 +144,19 @@ export const IPC = {
   settingsGet: 'settings:get',
   settingsPatch: 'settings:patch',
   settingsChanged: 'settings:changed',
+
+  vcamStatus: 'vcam:status',
+  vcamStatusChanged: 'vcam:status-changed',
+  vcamConfigure: 'vcam:configure',
+  vcamSetupCommand: 'vcam:setup-command',
+  vcamListBackgrounds: 'vcam:backgrounds-list',
+  vcamAddBackground: 'vcam:backgrounds-add',
+  vcamRemoveBackground: 'vcam:backgrounds-remove',
+  vcamReadBackground: 'vcam:backgrounds-read',
+  /** Main -> worker: what to render. */
+  vcamJob: 'vcam:job',
+  vcamWorkerReady: 'vcam:worker-ready',
+  vcamWorkerReport: 'vcam:worker-report',
 
   systemDiagnostics: 'system:diagnostics',
   systemUdevHelp: 'system:udev-help',

@@ -1,32 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Camera } from '@shared/types'
+import { labelledDevices, pickDeviceId } from '../lib/pickDevice'
 import './CameraPreview.css'
-
-/**
- * Matches a V4L2 device to a MediaDeviceInfo.
- *
- * Chromium labels video inputs with the UVC product name, so we match on that
- * rather than on the /dev/videoN path, which the web layer never sees.
- */
-function pickDeviceId(
-  devices: MediaDeviceInfo[],
-  names: { v4l2Name: string; label: string },
-): string | undefined {
-  const inputs = devices.filter((d) => d.kind === 'videoinput')
-  const normalise = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
-
-  const candidates = [names.v4l2Name, names.label].map(normalise).filter(Boolean)
-  for (const candidate of candidates) {
-    const hit = inputs.find((d) => {
-      const label = normalise(d.label)
-      return label.includes(candidate) || candidate.includes(label)
-    })
-    if (hit) return hit.deviceId
-  }
-
-  // A single input and a single camera is unambiguous enough to use.
-  return inputs.length === 1 ? inputs[0].deviceId : undefined
-}
 
 export function CameraPreview({
   camera,
@@ -35,6 +10,7 @@ export function CameraPreview({
   errorLabel,
   offLabel,
   blockedLabel,
+  output,
 }: {
   camera: Camera
   active: boolean
@@ -43,6 +19,8 @@ export function CameraPreview({
   errorLabel: string
   offLabel: string
   blockedLabel: string
+  /** Show this V4L2 device (the virtual camera's output) instead of the camera. */
+  output?: string | null
 }) {
   // Only these fields decide which device to open. Depending on the whole
   // camera object would restart the stream on every state broadcast, and
@@ -51,6 +29,15 @@ export function CameraPreview({
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const [error, setError] = useState<string | null>(null)
+  // Bumped on hotplug so a failed open is retried when devices change.
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    if (!error) return
+    const retry = () => setAttempt((n) => n + 1)
+    navigator.mediaDevices.addEventListener('devicechange', retry)
+    return () => navigator.mediaDevices.removeEventListener('devicechange', retry)
+  }, [error])
 
   const stop = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop())
@@ -71,17 +58,17 @@ export function CameraPreview({
       }
 
       try {
-        // Labels are only populated once a capture permission has been granted,
-        // so take a throwaway stream first when we have no labels yet.
-        let devices = await navigator.mediaDevices.enumerateDevices()
-        if (devices.every((d) => d.label === '')) {
-          const probe = await navigator.mediaDevices.getUserMedia({ video: true })
-          probe.getTracks().forEach((track) => track.stop())
-          devices = await navigator.mediaDevices.enumerateDevices()
-        }
+        const devices = await labelledDevices()
         if (cancelled) return
 
-        const deviceId = pickDeviceId(devices, { v4l2Name, label })
+        // The virtual camera is matched by its own label; the physical one must
+        // never resolve to the virtual device, which has a similar name.
+        const deviceId = output
+          ? pickDeviceId(devices, { v4l2Name: output, label: output }, { strict: true })
+          : pickDeviceId(devices, { v4l2Name, label }, { exclude: ['openemeet virtual camera'] })
+        // The loopback node only advertises capture once frames flow into it.
+        if (output && !deviceId) throw new Error('Waiting for the virtual camera…')
+
         const stream = await navigator.mediaDevices.getUserMedia({
           video: deviceId ? { deviceId: { exact: deviceId } } : true,
         })
@@ -106,7 +93,7 @@ export function CameraPreview({
       cancelled = true
       stop()
     }
-  }, [active, blocked, cameraId, v4l2Name, label, mock, stop])
+  }, [active, blocked, cameraId, v4l2Name, label, mock, output, attempt, stop])
 
   if (blocked) {
     return (
@@ -156,6 +143,7 @@ export function CameraPreview({
     <div className="preview">
       <video ref={videoRef} className="preview__video" muted playsInline />
       <span className="preview__tally" aria-hidden="true" />
+      {output && <span className="preview__badge mono">VIRTUAL</span>}
     </div>
   )
 }

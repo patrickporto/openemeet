@@ -30,6 +30,7 @@ Multiple PIXY cameras are supported at once, each with its own presets.
 | **Presets** | Saved framings scoped per camera by serial, applied from the window or the tray, with the live one marked |
 | **Multi-camera** | Cameras paired to their HID node via USB topology, so two PIXYs never cross wires |
 | **Tray** | GNOME AppIndicator menu: camera mode, presets (showing which is live), audio, gestures and recentre without opening the window |
+| **Virtual background** | Blur, built-in scenes, your own images or a solid colour, published as a virtual camera for Meet, Zoom, Teams or OBS. Segmentation runs locally (MediaPipe) |
 | **Autostart** | Optional launch at login via an XDG autostart entry, opening quietly in the tray |
 | **Bilingual** | Português (pt-BR) and English, following your system locale on first run |
 | **Themes** | Dark, light, or follow the system |
@@ -70,6 +71,23 @@ exact command to copy when something is missing.
 
 - `v4l-utils` (provides `v4l2-ctl`) — `sudo pacman -S v4l-utils` / `sudo apt install v4l-utils`
 - Membership of the `video` group: `sudo usermod -aG video "$USER"` (log out and back in)
+
+### Virtual background
+
+The virtual background is published as a regular camera, **openemeet Virtual
+Camera**, that any app can select. It needs `ffmpeg` and the `v4l2loopback`
+kernel module:
+
+```bash
+sudo pacman -S ffmpeg v4l2loopback-dkms      # Arch / Manjaro (plus your kernel headers)
+sudo apt install ffmpeg v4l2loopback-dkms    # Debian / Ubuntu
+```
+
+The **Background** tab then gives you the one-time command that loads the
+module with the right label on every boot. While the virtual camera is on,
+openemeet holds the physical camera. In your meeting app, pick the virtual
+camera instead of the PIXY. Privacy mode releases the camera and publishes a
+"privacy" card instead.
 
 ### Tray icon on GNOME
 

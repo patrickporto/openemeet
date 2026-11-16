@@ -10,6 +10,7 @@ import { ImagePanel } from './components/ImagePanel'
 import { SmartPanel } from './components/SmartPanel'
 import { PresetsPanel } from './components/PresetsPanel'
 import { SettingsPanel } from './components/SettingsPanel'
+import { EffectsPanel } from './components/EffectsPanel'
 import { EmptyState } from './components/ui'
 import { useI18n } from './i18n/I18nProvider'
 import './App.css'
@@ -125,6 +126,8 @@ function Shell({
             <ImagePanel camera={selected} />
           ) : tab === 'smart' ? (
             <SmartPanel camera={selected} />
+          ) : tab === 'effects' ? (
+            <EffectsPanel camera={selected} config={settings.virtualCamera} />
           ) : (
             <PresetsPanel camera={selected} presets={presets} onReload={reloadPresets} />
           )}
